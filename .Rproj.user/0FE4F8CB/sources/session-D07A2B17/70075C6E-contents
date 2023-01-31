@@ -20,23 +20,23 @@ sum()
 
 ```{r n_unique_species, echo=FALSE,include=FALSE}
 
-"https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+unique_depobio_species = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
 glimpse() %>%
 pull(dataset_key) %>% 
 map(~
-rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey 
+rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey
 ) %>% 
 compact() %>%
 bind_rows() %>% 
 unique() %>%
 group_by(name) %>%
 summarise(count = sum(count)) %>% 
-glimpse() %>%
-saveRDS("data/unique_species_keys.rda")
+glimpse() 
+
 ```
 
-`r nrow(readRDS("data/unique_species_keys.rda"))`
+`r nrow(unique_depobio_species)`
 
 ## n unique species but not in any other dataset in France
 
@@ -47,7 +47,7 @@ readr::read_tsv() %>%
 glimpse() %>%
 pull(dataset_key) 
 
-rgbif::occ_search(country="FR",facet = c("datasetKey"),limit=0,datasetKey.facetLimit = 100000)$facets$datasetKey %>% 
+unique_france_species = rgbif::occ_search(country="FR",facet = c("datasetKey"),limit=0,datasetKey.facetLimit = 100000)$facets$datasetKey %>% 
 filter(!name %in% depobio_dataset_key) %>% 
 pull(name) %>%
 map(~
@@ -56,29 +56,24 @@ rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facet
 compact() %>%
 map(~ .x$name) %>% 
 flatten_chr() %>% 
-unique() %>%
-saveRDS("data/unique_species_keys_france.rda")
-
-unique_depobio_species = readRDS("data/unique_species_keys.rda")$name
-unique_france_species = readRDS("data/unique_species_keys_france.rda") 
+unique() 
 
 ```
 
-`r length(unique_depobio_species[!unique_depobio_species %in% unique_france_species])`
+`r length(unique_depobio_species$name[!unique_depobio_species$name %in% unique_france_species])`
 
 ## iucn counts
 
 ```{r iucn_counts, echo=FALSE,include=FALSE}
 
-readRDS("data/unique_species_keys.rda") %>%
+unique_depobio_species_iucn = unique_depobio_species %>%
 mutate(iucn_cat = map_chr(name,~try(rgbif::name_usage(key=.x,data="iucnRedListCategory")$data$category))) %>%
-glimpse() %>%
-saveRDS("data/unique_species_keys_iucn.rda")
+glimpse() 
 ```
 
 ```{r iucn_counts_print_table, echo=FALSE,include=TRUE,results='asis'}
 
-readRDS("data/unique_species_keys_iucn.rda") %>% 
+unique_depobio_species_iucn %>%
 group_by(iucn_cat) %>%
 summarise(n_occ = sum(count),
 n_species = n_distinct(name)
@@ -92,9 +87,7 @@ knitr::kable()
 
 ```{r iucn_counts_print_table_unique_FR, echo=FALSE,include=TRUE,results='asis'}
 
-unique_france_species = readRDS("data/unique_species_keys_france.rda") 
-
-readRDS("data/unique_species_keys_iucn.rda") %>%
+unique_depobio_species_iucn %>%
 filter(!name %in% unique_france_species) %>%
 group_by(iucn_cat) %>%
 summarise(n_occ = sum(count),
@@ -108,10 +101,11 @@ knitr::kable()
 ## unique species by higher level taxa from schema used in country report
 
 ```{r htax, echo=FALSE,include=FALSE}
-readRDS("data/unique_species_keys.rda") %>%
+
+unique_depobio_species_htax = 
+unique_depobio_species %>%
 mutate(name_data=map(name,~rgbif::name_usage(key=.x)$data)) %>%
-tidyr::unnest(cols="name_data") %>%
-saveRDS("data/unique_species_keys_htax.rda")
+tidyr::unnest(cols="name_data")
 ```
 
 ```{r country_report, echo=FALSE,include=TRUE,results='asis'}
@@ -120,7 +114,7 @@ c("1103","1104","494","495","1105","496","497","1106","498","499","1107","537","
 
 # Gymnosperms
 
-readRDS("data/unique_species_keys_htax.rda") %>% 
+unique_depobio_species_htax %>%
 mutate(group = case_when(
 classKey == 359 ~ "Mammals",
 classKey == 212 ~ "Birds",
@@ -145,7 +139,7 @@ knitr::kable()
 
 ```
 
-# total unique citations 
+## total unique literature citations 
 
 ```{r lit, echo=FALSE,include=FALSE}
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
@@ -156,11 +150,10 @@ mutate(lit_data = map(dataset_key,~rgbif::lit_search(datasetKey=.x,limit=1000)$d
 tidyr::unnest(cols="lit_data")
 ```
 
-
 `r lit_data %>% pull(id) %>% unique() %>% length()`
 
-# number of records by department (to answer the question: are there records from départments and pays d’outre-mer outside “mainland” France?)
-# gadm_gid=FRA.1_1&gadm_gid=FRA.2_1
+<!-- # number of records by department (to answer the question: are there records from départments and pays d’outre-mer outside “mainland” France?) -->
+<!-- # gadm_gid=FRA.1_1&gadm_gid=FRA.2_1 -->
 
-Not completed
+<!-- Not completed -->
 

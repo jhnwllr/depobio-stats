@@ -12,7 +12,7 @@ Depbio stats
 
 
 
-
+11096
 
 ## n unique species but not in any other dataset in France
 
@@ -66,15 +66,14 @@ Depbio stats
 |Basidiomycota |     582|        18|
 |Sac fungi     |      79|        63|
 
-# total unique citations 
-
+## total unique literature citations 
 
 
 
 34
 
-# number of records by department (to answer the question: are there records from départments and pays d’outre-mer outside “mainland” France?)
-# gadm_gid=FRA.1_1&gadm_gid=FRA.2_1
+<!-- # number of records by department (to answer the question: are there records from départments and pays d’outre-mer outside “mainland” France?) -->
+<!-- # gadm_gid=FRA.1_1&gadm_gid=FRA.2_1 -->
 
-Not completed
+<!-- Not completed -->
 
