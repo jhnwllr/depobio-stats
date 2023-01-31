@@ -37,7 +37,7 @@ jobs:
 
       - name: build table script
         run: | 
-        knitr::knit("README.Rmd")
+            knitr::knit("README.Rmd")
       shell: Rscript {0} 
        
       - uses: stefanzweifel/git-auto-commit-action@v4

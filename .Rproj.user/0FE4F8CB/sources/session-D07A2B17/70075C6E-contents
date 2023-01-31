@@ -36,7 +36,7 @@ glimpse() %>%
 saveRDS("data/unique_species_keys.rda")
 ```
 
-`r as.character(nrow(n_unique_species))`
+`r nrow(readRDS("data/unique_species_keys.rda"))`
 
 ## n unique species but not in any other dataset in France
 
