@@ -14,7 +14,59 @@ sum()
 }
 
 # Needs snapshots
-# 2. # of occurrences by year + percentage of current annual total of data from France
+if(FALSE) { # 2. # of occurrences by eventDate year + percentage of current annual total of data from France
+
+"https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+readr::read_tsv() %>% 
+select(dataset_key) %>%
+mutate(facet = map(dataset_key,~rgbif::occ_search(datasetKey=.x,facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year)) %>% 
+tidyr::unnest(cols="facet") %>%
+group_by(name) %>% 
+summarise(n_occ_depobio = sum(count)) %>% 
+glimpse() %>% 
+merge(rgbif::occ_search(country="FR",facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year,by="name") %>%
+select(year=name,n_occ_depobio,n_occ_fr=count) %>% 
+mutate(per_occ_depobio = (n_occ_depobio/n_occ_fr)*100) %>% 
+mutate(year = as.numeric(year)) %>%
+arrange(year) %>%  
+glimpse() 
+}
+
+hh <- 10
+
+# depobio first? 
+
+unique_depobio_species = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+readr::read_tsv() %>%
+head(hh) %>%
+glimpse() %>%
+select(dataset_key) %>% 
+map(~
+rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey
+) %>% 
+compact() %>%
+bind_rows() %>% 
+unique() %>%
+group_by(name) %>%
+summarise(count = sum(count)) %>% 
+glimpse() 
+
+unique_depobio_species
+
+"https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+readr::read_tsv() %>% 
+select(dataset_key) %>%
+
+rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey
+
+
+
+# rgbif::occ_search(country="FR",taxonKey=7647400,facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year
+
+# rgbif::occ_search(datasetKey="c6f6a4e8-636c-40a8-9520-acb66734a7ef",
+# ,country="FR",taxonKey=7647400,facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year
+
+
 
 if(FALSE) { # 3. a. # of [unique] species 
 "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
@@ -127,7 +179,7 @@ arrange(-n_occ)
 }
 
 
-# if(FALSE) { # 6. # of unique citations + peer-reviewed data uses
+if(FALSE) { # 6. # of unique citations + peer-reviewed data uses
 
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
@@ -140,7 +192,7 @@ glimpse() %>%
 `r lit_data %>% pull(id) %>% unique() %>% length()`
 
 
-# }
+}
 
 
 # total_n_cit = readRDS("data/lit_data.rda") %>% pull(id) %>% unique() %>% length()

@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           pak::pkg_install("ropensci/rgbif@literature")
-          pak::pkg_install(c("knitr","readr","purrr","dplyr"))
+          pak::pkg_install(c("knitr","readr","purrr","dplyr","tidyr"))
         shell: Rscript {0}
 
       - name: run stats

@@ -1,27 +1,61 @@
-Depbio stats
+## depobio stats
+
+GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**. 
+
+The relevant datasets are all tagged with the keyword “depobio”. 
+
+https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
 
 ```{r setup, include=FALSE}
 library(dplyr)
 library(purrr)
+hh <- 10
 ```
 
-## Total occurrence counts
+## total occurrence counts
 
 ```{r total occ records, echo=FALSE,include=FALSE}
 total_occ_counts = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
+head(hh) %>% 
 pull(occurrence_records_count) %>% 
 sum()
 ```
 
+The total number of occurrence records published under the keyword "depobio":
+
 `r as.character(total_occ_counts)`
 
-## n unique species
+## percent total by year (eventDate)
+
+```{r percent total by event date, echo=FALSE,include=FALSE}
+
+occ_by_year = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+readr::read_tsv() %>% 
+head(hh) %>% 
+select(dataset_key) %>%
+mutate(facet = map(dataset_key,~rgbif::occ_search(datasetKey=.x,facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year)) %>% 
+tidyr::unnest(cols="facet") %>%
+group_by(name) %>% 
+summarise(n_occ_depobio = sum(count)) %>% 
+glimpse() %>% 
+merge(rgbif::occ_search(country="FR",facet = c("year"),limit=0,year.facetLimit = 100000)$facets$year,by="name") %>%
+select(year=name,n_occ_depobio,n_occ_fr=count) %>% 
+mutate(per_occ_depobio = (n_occ_depobio/n_occ_fr)*100) %>% 
+mutate(year = as.numeric(year)) %>%
+arrange(year)  
+
+```
+
+`r occ_by_year %>% knitr::kable()`
+
+## number of unique species
 
 ```{r n_unique_species, echo=FALSE,include=FALSE}
 
 unique_depobio_species = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
+head(hh) %>%
 glimpse() %>%
 pull(dataset_key) %>% 
 map(~
@@ -36,31 +70,44 @@ glimpse()
 
 ```
 
+Total number of unique species for datasets published under the keyword "depobio":
+
 `r nrow(unique_depobio_species)`
 
-## n unique species but not in any other dataset in France
+<!-- ## number unique species, but not in any other dataset in France -->
 
-```{r not_in_previously_france, echo=FALSE,include=FALSE}
+<!-- ```{r not_in_previously_france, echo=FALSE,include=FALSE} -->
 
-depobio_dataset_key = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
-readr::read_tsv() %>%
-glimpse() %>%
-pull(dataset_key) 
+<!-- # depobio_dataset_key = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>% -->
+<!-- # readr::read_tsv() %>% -->
+<!-- # head(hh) %>% -->
+<!-- # glimpse() %>% -->
+<!-- # pull(dataset_key)  -->
+<!-- #  -->
+<!-- # unique_france_species = rgbif::occ_search(country="FR",facet = c("datasetKey"),limit=0,datasetKey.facetLimit = 100000)$facets$datasetKey %>%  -->
+<!-- # filter(!name %in% depobio_dataset_key) %>%  -->
+<!-- # pull(name) %>% -->
+<!-- # map(~ -->
+<!-- # rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey  -->
+<!-- # ) %>%  -->
+<!-- # compact() %>% -->
+<!-- # map(~ .x$name) %>%  -->
+<!-- # flatten_chr() %>%  -->
+<!-- # unique()  -->
 
-unique_france_species = rgbif::occ_search(country="FR",facet = c("datasetKey"),limit=0,datasetKey.facetLimit = 100000)$facets$datasetKey %>% 
-filter(!name %in% depobio_dataset_key) %>% 
-pull(name) %>%
-map(~
-rgbif::occ_search(datasetKey=.x,facet = c("speciesKey"),limit=0,speciesKey.facetLimit = 100000)$facets$speciesKey 
-) %>% 
-compact() %>%
-map(~ .x$name) %>% 
-flatten_chr() %>% 
-unique() 
+<!-- ``` -->
 
-```
+<!-- These species only occur in datasets published using: -->
 
-`r length(unique_depobio_species$name[!unique_depobio_species$name %in% unique_france_species])`
+<!-- `r length(unique_depobio_species$name[!unique_depobio_species$name %in% unique_france_species])` -->
+
+<!-- # ```{r unique_in_france_table, echo=FALSE,include=TRUE,results='asis'} -->
+<!-- #  -->
+<!-- # unique_depobio_species$name[!unique_depobio_species$name %in% unique_france_species] %>% -->
+<!-- # data.frame() %>% -->
+<!-- # knitr::kable() -->
+<!-- #  -->
+<!-- # ``` -->
 
 ## iucn counts
 
@@ -83,20 +130,20 @@ knitr::kable()
 
 ```
 
-## iucn counts unique to depobio in FR
+<!-- ## iucn counts unique to depobio in FR -->
 
-```{r iucn_counts_print_table_unique_FR, echo=FALSE,include=TRUE,results='asis'}
+<!-- ```{r iucn_counts_print_table_unique_FR, echo=FALSE,include=TRUE,results='asis'} -->
 
-unique_depobio_species_iucn %>%
-filter(!name %in% unique_france_species) %>%
-group_by(iucn_cat) %>%
-summarise(n_occ = sum(count),
-n_species = n_distinct(name)
-) %>%
-arrange(-n_occ) %>% 
-knitr::kable()
+<!-- unique_depobio_species_iucn %>% -->
+<!-- filter(!name %in% unique_france_species) %>% -->
+<!-- group_by(iucn_cat) %>% -->
+<!-- summarise(n_occ = sum(count), -->
+<!-- n_species = n_distinct(name) -->
+<!-- ) %>% -->
+<!-- arrange(-n_occ) %>%  -->
+<!-- knitr::kable() -->
 
-```
+<!-- ``` -->
 
 ## unique species by higher level taxa from schema used in country report
 
@@ -144,16 +191,33 @@ knitr::kable()
 ```{r lit, echo=FALSE,include=FALSE}
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
+head(hh) %>%
 select(dataset_key) %>%
 glimpse() %>%  
 mutate(lit_data = map(dataset_key,~rgbif::lit_search(datasetKey=.x,limit=1000)$data)) %>% 
 tidyr::unnest(cols="lit_data")
+
+# make exports 
+readr::write_tsv(lit_data %>% select(-dataset_key) %>% unique(),"exports/lit_data.tsv")
+
+
 ```
 
+The total number of literature citations for datasets using the keyword "depobio": 
+
 `r lit_data %>% pull(id) %>% unique() %>% length()`
+
+See full export of this data in `exports/lit_data.tsv`.
+
 
 <!-- # number of records by department (to answer the question: are there records from départments and pays d’outre-mer outside “mainland” France?) -->
 <!-- # gadm_gid=FRA.1_1&gadm_gid=FRA.2_1 -->
 
 <!-- Not completed -->
 
+<!-- ## impact assesments  -->
+<!-- depbio eventDate n_occ, n_sp "about" and "published by" FR -->
+
+<!-- eventDate means "first"  -->
+
+<!-- make citations table for all of depobio as export  -->
