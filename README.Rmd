@@ -1,5 +1,7 @@
 ## depobio stats
 
+last updated `r Sys.Date()`.
+
 GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**. 
 
 The relevant datasets are all tagged with the keyword “depobio”. 
@@ -9,7 +11,7 @@ https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
 ```{r setup, include=FALSE}
 library(dplyr)
 library(purrr)
-hh <- 10
+hh <- 50000
 ```
 
 ## total occurrence counts  

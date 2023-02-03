@@ -1,5 +1,7 @@
 ## depobio stats
 
+last updated 2023-02-03.
+
 GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**. 
 
 The relevant datasets are all tagged with the keyword “depobio”. 
