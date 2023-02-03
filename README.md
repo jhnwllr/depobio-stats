@@ -16,7 +16,7 @@ https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
 
 The total number of occurrence records published under the keyword "depobio":
 
-16581
+16800
 
 ## percent total by year (eventDate)
 
@@ -27,11 +27,11 @@ The total number of occurrence records published under the keyword "depobio":
 | year| n_occ_depobio| n_occ_fr| per_occ_depobio|
 |----:|-------------:|--------:|---------------:|
 | 2014|            67|  4708693|       0.0014229|
-| 2015|           369|  4871203|       0.0075751|
-| 2016|           486|  5018037|       0.0096851|
+| 2015|           545|  4871203|       0.0111882|
+| 2016|           530|  5018037|       0.0105619|
 | 2017|           466|  5895125|       0.0079048|
 | 2018|          3365|  5894676|       0.0570854|
-| 2019|         11321|  5630477|       0.2010664|
+| 2019|         11320|  5630477|       0.2010487|
 | 2021|             9|  3206665|       0.0002807|
 
 
@@ -42,7 +42,7 @@ The total number of occurrence records published under the keyword "depobio":
 
 Total number of unique species for datasets published under the keyword "depobio":
 
-441
+473
 
 ## iucn counts
 
@@ -51,10 +51,10 @@ Total number of unique species for datasets published under the keyword "depobio
 
 |iucn_cat        | n_occ| n_species|
 |:---------------|-----:|---------:|
-|LEAST_CONCERN   | 11894|       216|
-|NOT_EVALUATED   |  2169|       208|
-|NEAR_THREATENED |   353|        10|
-|DATA_DEFICIENT  |     7|         4|
+|LEAST_CONCERN   | 12008|       227|
+|NOT_EVALUATED   |  2189|       226|
+|NEAR_THREATENED |   355|        12|
+|DATA_DEFICIENT  |     8|         5|
 |VULNERABLE      |     7|         2|
 |ENDANGERED      |     1|         1|
 
@@ -66,13 +66,13 @@ Total number of unique species for datasets published under the keyword "depobio
 
 |group      | n_occ| n_species|
 |:----------|-----:|---------:|
-|Mammals    | 13654|        30|
-|Birds      |   408|       115|
-|other      |   254|       224|
-|Insects    |    71|        56|
+|Mammals    | 13664|        32|
+|Birds      |   506|       119|
+|other      |   281|       248|
+|Insects    |    72|        57|
 |Amphibians |    26|         9|
 |Reptiles   |    15|         4|
-|Ferns      |     3|         3|
+|Ferns      |     4|         4|
 
 ## total unique literature citations 
 
