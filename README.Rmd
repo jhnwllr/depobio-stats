@@ -9,7 +9,7 @@ https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
 ```{r setup, include=FALSE}
 library(dplyr)
 library(purrr)
-hh <- 10
+hh <- 5000
 ```
 
 ## total occurrence counts
