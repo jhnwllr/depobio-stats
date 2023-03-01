@@ -11,6 +11,7 @@ https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
 ```{r setup, include=FALSE}
 library(dplyr)
 library(purrr)
+library(tidyr)
 hh <- 50000
 ```
 
@@ -152,8 +153,6 @@ tidyr::unnest(cols="lit_data")
 
 # make exports 
 readr::write_tsv(lit_data %>% select(-dataset_key) %>% unique(),"exports/lit_data.tsv")
-
-
 ```
 
 The total number of literature citations for datasets using the keyword "depobio": 
