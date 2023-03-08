@@ -2,20 +2,27 @@
 
 last updated `r Sys.Date()`.
 
-GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**. 
+GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**.
 
-The relevant datasets are all tagged with the keyword “depobio”. 
+The relevant datasets are all tagged with the keyword "depobio".
 
-https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE
+<https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE>
+
+```{r save README to archive, include=FALSE}
+# save to archive 
+file.rename("README.md",paste0("readme-archive/README-",Sys.Date(),".md"))
+```
 
 ```{r setup, include=FALSE}
 library(dplyr)
 library(purrr)
 library(tidyr)
+library(ggplot2)
 hh <- 50000
+# hh <- 5
 ```
 
-## total occurrence counts  
+## total occurrence counts
 
 ```{r total occ records, echo=FALSE,include=FALSE}
 total_occ_counts = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
@@ -48,14 +55,22 @@ mutate(per_occ_depobio = (n_occ_depobio/n_occ_fr)*100) %>%
 mutate(year = as.numeric(year)) %>%
 arrange(year)  
 
+# export table
+readr::write_tsv(occ_by_year,paste0("exports/occ_by_year/occ_by_year-",Sys.Date(),".tsv"))
 ```
 
-`r occ_by_year %>% knitr::kable()`
+```{r plot by year, echo=TRUE,include=TRUE}
+p = ggplot(occ_by_year) + 
+geom_col(aes(year,n_occ_depobio)) + 
+theme_bw()
+p
+```
+
+See exports folder for tsv file of counts. 
 
 ## number of unique species
 
 ```{r n_unique_species, echo=FALSE,include=FALSE}
-
 unique_depobio_species = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
 head(hh) %>%
@@ -98,7 +113,6 @@ knitr::kable()
 
 ```
 
-
 ## unique species by higher level taxa from schema used in country report
 
 ```{r htax, echo=FALSE,include=FALSE}
@@ -140,7 +154,18 @@ knitr::kable()
 
 ```
 
-## total unique literature citations 
+
+```{r by kingdom counts, echo=FALSE,include=TRUE,results='asis'}
+unique_depobio_species_htax %>%
+group_by(kingdom) %>%
+summarise(n_occ = sum(count),
+n_species = n_distinct(name)
+) %>%
+arrange(-n_occ) %>% 
+knitr::kable()
+```
+
+## total unique literature citations
 
 ```{r lit, echo=FALSE,include=FALSE}
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
@@ -152,12 +177,37 @@ mutate(lit_data = map(dataset_key,~rgbif::lit_search(datasetKey=.x,limit=1000)$d
 tidyr::unnest(cols="lit_data")
 
 # make exports 
-readr::write_tsv(lit_data %>% select(-dataset_key) %>% unique(),"exports/lit_data.tsv")
+readr::write_tsv(lit_data %>% select(-dataset_key) %>% unique(),paste0("exports/lit_data/lit_data-",Sys.Date(),".tsv"))
 ```
 
-The total number of literature citations for datasets using the keyword "depobio": 
+The total number of literature citations for datasets using the keyword "depobio":
 
 `r lit_data %>% pull(id) %>% unique() %>% length()`
 
 See full export of this data in `exports/lit_data.tsv`.
+
+## isInCluster
+
+Are records from depobio possible duplicates of other records in GBIF?
+
+```{r is in cluster, echo=FALSE,include=TRUE,results='asis'}
+
+"https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
+readr::read_tsv() %>% 
+head(hh) %>% 
+pull(dataset_key) %>%
+map(~ rgbif::occ_search(facet="isInCluster",datasetKey=.x,limit=0)$facet$isInCluster) %>% 
+bind_rows() %>% 
+group_by(name) %>% 
+summarise(n_occ = sum(count)) %>% 
+select(isInCluster=name,n_occ) %>%
+knitr::kable()
+```
+
+<!-- GBIF total for comparison -->
+
+<!-- # ```{r is in cluster gbif total, echo=FALSE,include=TRUE,results='asis'} -->
+<!-- rgbif::occ_search(facet="isInCluster",limit=0)$facet$isInCluster %>%  -->
+<!-- knitr::kable() -->
+<!-- ``` -->
 
