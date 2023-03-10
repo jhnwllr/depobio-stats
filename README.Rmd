@@ -19,7 +19,7 @@ library(purrr)
 library(tidyr)
 library(ggplot2)
 hh <- 50000
-# hh <- 5
+# hh <- 10
 ```
 
 ## total occurrence counts
@@ -32,7 +32,7 @@ pull(occurrence_records_count) %>%
 sum()
 ```
 
-The total number of occurrence records published under the keyword "depobio":
+The total number of occurrence records published under tkhe keyword "depobio":
 
 `r as.character(total_occ_counts)`
 
@@ -59,12 +59,14 @@ arrange(year)
 readr::write_tsv(occ_by_year,paste0("exports/occ_by_year/occ_by_year-",Sys.Date(),".tsv"))
 ```
 
-```{r plot by year, echo=TRUE,include=TRUE}
+```{r plot by year, echo=FALSE,include=FALSE}
 p = ggplot(occ_by_year) + 
 geom_col(aes(year,n_occ_depobio)) + 
 theme_bw()
-p
+ggsave("plots/occ_by_year.png",dpi=600,width=7,height=5)
 ```
+
+![](https://raw.githubusercontent.com/jhnwllr/depobio-stats/main/plots_by_year.png)
 
 See exports folder for tsv file of counts. 
 

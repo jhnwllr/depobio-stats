@@ -1,6 +1,6 @@
 ## depobio stats
 
-last updated 2023-03-08.
+last updated 2023-03-09.
 
 GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**.
 
@@ -16,23 +16,17 @@ The relevant datasets are all tagged with the keyword "depobio".
 
 
 
-The total number of occurrence records published under the keyword "depobio":
+The total number of occurrence records published under tkhe keyword "depobio":
 
-4004935
+4021728
 
 ## percent total by year (eventDate)
 
 
 
 
-```r
-p = ggplot(occ_by_year) + 
-geom_col(aes(year,n_occ_depobio)) + 
-theme_bw()
-p
-```
 
-![plot of chunk plot by year](figure/plot by year-1.png)
+![](https://raw.githubusercontent.com/jhnwllr/depobio-stats/main/plots_by_year.png)
 
 See exports folder for tsv file of counts. 
 
@@ -51,8 +45,8 @@ Total number of unique species for datasets published under the keyword "depobio
 
 |iucn_cat                        |   n_occ| n_species|
 |:-------------------------------|-------:|---------:|
-|LEAST_CONCERN                   | 1632229|      2762|
-|NOT_EVALUATED                   |  341354|      8131|
+|LEAST_CONCERN                   | 1632508|      2762|
+|NOT_EVALUATED                   |  341366|      8131|
 |NEAR_THREATENED                 |   46979|       115|
 |VULNERABLE                      |    8743|        98|
 |DATA_DEFICIENT                  |    2950|        72|
@@ -68,14 +62,14 @@ Total number of unique species for datasets published under the keyword "depobio
 
 |group         |   n_occ| n_species|
 |:-------------|-------:|---------:|
-|Mammals       | 1495819|       202|
+|Mammals       | 1496054|       202|
 |Birds         |  275031|       726|
-|other         |  180934|      5973|
+|other         |  180936|      5973|
 |Insects       |   35678|      2688|
 |Bony fish     |   13504|       358|
 |Arachnids     |    9345|       393|
 |Amphibians    |    8402|        71|
-|Reptiles      |    7745|       100|
+|Reptiles      |    7799|       100|
 |Molluscs      |    5074|       315|
 |Ferns         |    1783|       165|
 |Mosses        |    1124|       193|
@@ -86,8 +80,8 @@ Total number of unique species for datasets published under the keyword "depobio
 
 |kingdom   |   n_occ| n_species|
 |:---------|-------:|---------:|
-|Animalia  | 1883259|      5687|
-|Plantae   |  150934|      5397|
+|Animalia  | 1883548|      5687|
+|Plantae   |  150936|      5397|
 |Fungi     |     818|        90|
 |Chromista |     240|        96|
 |Bacteria  |       5|         3|
@@ -99,7 +93,7 @@ Total number of unique species for datasets published under the keyword "depobio
 
 The total number of literature citations for datasets using the keyword "depobio":
 
-44
+45
 
 See full export of this data in `exports/lit_data.tsv`.
 
@@ -109,7 +103,7 @@ Are records from depobio possible duplicates of other records in GBIF?
 
 
 ```
-## Rows: 4371 Columns: 17
+## Rows: 4379 Columns: 17
 ## ── Column specification ───────────────────────────────────────────────────
 ## Delimiter: "\t"
 ## chr (12): dataset_key, title, doi, license, type, hosting_organization_...
@@ -124,8 +118,8 @@ Are records from depobio possible duplicates of other records in GBIF?
 
 |isInCluster |   n_occ|
 |:-----------|-------:|
-|false       | 2564683|
-|true        |  288642|
+|false       | 2565401|
+|true        |  288644|
 
 <!-- GBIF total for comparison -->
 
