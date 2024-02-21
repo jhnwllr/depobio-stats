@@ -18,8 +18,8 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(ggplot2)
-hh <- 50000
-# hh <- 10
+# hh <- 50000
+hh <- 10
 ```
 
 ## total occurrence counts
