@@ -13,7 +13,6 @@ The relevant datasets are all tagged with the keyword "depobio".
 ## total occurrence counts
 
 
-
 The total number of occurrence records published under tkhe keyword "depobio":
 
 2857863
