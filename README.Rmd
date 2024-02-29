@@ -18,17 +18,16 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(ggplot2)
-# hh <- 50000
-hh <- 10
+hh <- 50000
+# hh <- 10
 ```
 
 ## total occurrence counts
 
 ```{r total occ records, echo=FALSE,include=FALSE}
-total_occ_counts = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
-readr::read_tsv() %>%
+total_occ_counts = rgbif::dataset_export(q="depobio",type="OCCURRENCE") %>%
 head(hh) %>% 
-pull(occurrence_records_count) %>% 
+pull(occurrenceRecordsCount) %>% 
 sum()
 ```
 
@@ -68,7 +67,7 @@ ggsave("plots/occ_by_year.png",dpi=600,width=7,height=5)
 
 ![](https://raw.githubusercontent.com/jhnwllr/depobio-stats/main/plots/occ_by_year.png)
 
-See exports folder for tsv file of counts. 
+See exports folder for tsv file of counts.
 
 ## number of unique species
 
@@ -156,7 +155,6 @@ knitr::kable()
 
 ```
 
-
 ```{r by kingdom counts, echo=FALSE,include=TRUE,results='asis'}
 unique_depobio_species_htax %>%
 group_by(kingdom) %>%
@@ -172,10 +170,10 @@ knitr::kable()
 ```{r lit, echo=FALSE,include=FALSE}
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
-head(hh) %>%
+head(10) %>%
 select(dataset_key) %>%
 glimpse() %>%  
-mutate(lit_data = map(dataset_key,~rgbif::lit_search(datasetKey=.x,limit=1000)$data)) %>% 
+mutate(lit_data = map(dataset_key,~try(rgbif::lit_search(datasetKey=.x,limit=1000)$data))) %>% 
 tidyr::unnest(cols="lit_data")
 
 # make exports 
@@ -209,7 +207,9 @@ knitr::kable()
 <!-- GBIF total for comparison -->
 
 <!-- # ```{r is in cluster gbif total, echo=FALSE,include=TRUE,results='asis'} -->
-<!-- rgbif::occ_search(facet="isInCluster",limit=0)$facet$isInCluster %>%  -->
-<!-- knitr::kable() -->
-<!-- ``` -->
 
+<!-- rgbif::occ_search(facet="isInCluster",limit=0)$facet$isInCluster %>%  -->
+
+<!-- knitr::kable() -->
+
+<!-- ``` -->
