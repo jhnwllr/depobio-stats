@@ -170,7 +170,6 @@ knitr::kable()
 ```{r lit, echo=FALSE,include=FALSE}
 lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&type=OCCURRENCE" %>%
 readr::read_tsv() %>%
-head(10) %>%
 select(dataset_key) %>%
 glimpse() %>%  
 mutate(lit_data = map(dataset_key,~try(rgbif::lit_search(datasetKey=.x,limit=1000)$data))) %>% 
