@@ -1,6 +1,6 @@
 ## depobio stats
 
-last updated 2024-02-29.
+last updated 2024-03-01.
 
 GBIF France publishes a large group of data from a nationally mandated repository for EIA data called **depobio**.
 
@@ -100,9 +100,9 @@ Are records from depobio possible duplicates of other records in GBIF?
 
 ```
 ## Rows: 4402 Columns: 17
-## ── Column specification ──────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: "\t"
-## chr (12): dataset_key, title, doi, license, type, hosting_organization_key, hosting_or...
+## chr (12): dataset_key, title, doi, license, type, hosting_organization_key, ...
 ## dbl  (2): occurrence_records_count, name_usages_count
 ## lgl  (3): sub_type, network_keys, project_identifier
 ## 
