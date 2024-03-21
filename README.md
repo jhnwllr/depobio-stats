@@ -9,9 +9,6 @@ The relevant datasets are all tagged with the keyword "depobio".
 <https://www.gbif.org/dataset/search?offset=4000&q=depobio&type=OCCURRENCE>
 
 
-
-
-
 ## total occurrence counts
 
 
