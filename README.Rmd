@@ -172,7 +172,16 @@ lit_data = "https://api.gbif.org/v1/dataset/search/export?format=TSV&q=depobio&t
 readr::read_tsv() %>%
 select(dataset_key) %>%
 glimpse() %>%  
-mutate(lit_data = map(dataset_key,~try(rgbif::lit_search(datasetKey=.x,limit=1000)$data))) %>% 
+mutate(lit_data = 
+map(dataset_key, ~ {
+out <- try({
+  out <- rgbif::lit_search(datasetKey=.x,limit=1000)$data
+  if(length(out) == 0) {
+  out <- data.frame()  
+  }
+  out
+})
+})) %>% 
 tidyr::unnest(cols="lit_data")
 
 # make exports 
